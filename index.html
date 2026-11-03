@@ -1,11 +1,9 @@
 
 <!DOCTYPE html>
 <html lang="zh-Hant">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>飛牛牧場 AR 兔兔找找看</title>
 
     <!-- A-Frame -->
@@ -21,17 +19,14 @@
 
         body {
             margin: 0;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            background: #fff8ed;
             overflow: hidden;
-            font-family: "Microsoft JhengHei", sans-serif;
-            background: #f8f1df;
         }
 
-        /* AR 場景全螢幕 */
         #ar-scene {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
             z-index: 1;
         }
 
@@ -40,21 +35,22 @@
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 10;
             padding: 15px;
             text-align: center;
-            color: #60452d;
-            background: rgba(255, 248, 225, 0.92);
+            background: rgba(255, 248, 237, 0.92);
+            z-index: 10;
         }
 
         #top-panel h2 {
             margin: 0 0 6px;
+            color: #754b28;
             font-size: 21px;
         }
 
         #status {
-            font-size: 14px;
-            margin: 0;
+            margin: 5px 0;
+            color: #5d4935;
+            font-size: 15px;
         }
 
         #bottom-panel {
@@ -62,85 +58,47 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            z-index: 10;
-            padding: 14px;
+            padding: 15px;
             text-align: center;
-            color: #60452d;
-            background: rgba(255, 248, 225, 0.92);
+            background: rgba(255, 248, 237, 0.92);
+            z-index: 10;
         }
 
         #scan-message {
-            margin: 0 0 10px;
-            font-size: 14px;
+            margin: 0 0 12px;
+            color: #754b28;
+            font-size: 16px;
         }
 
-        #restart-button,
-        #start-button {
+        button {
             border: none;
             border-radius: 25px;
             padding: 12px 25px;
-            color: white;
-            background: #8caa59;
+            margin: 4px;
             font-size: 16px;
+            color: white;
+            background: #8cbd65;
             cursor: pointer;
         }
 
-        #start-button {
-            position: fixed;
-            z-index: 20;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            padding: 16px 30px;
-            font-size: 18px;
+        #restart-button {
+            background: #d69a58;
         }
 
         #error-message {
             display: none;
-            position: fixed;
-            z-index: 30;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85%;
-            padding: 20px;
-            border-radius: 15px;
-            background: white;
-            color: #60452d;
-            text-align: center;
-            line-height: 1.7;
+            color: red;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- 上方標題 -->
+    <!-- 上方資訊 -->
     <div id="top-panel">
         <h2>🐰 AR 兔兔找找看</h2>
-        <p id="status">準備開始掃描兔子的家！</p>
-    </div>
-
-    <!-- 開始 AR 按鈕 -->
-    <button id="start-button">開始 AR 探險</button>
-
-    <!-- 下方操作提示 -->
-    <div id="bottom-panel">
-        <p id="scan-message">
-            請將鏡頭對準兔子的家圖片
-        </p>
-
-        <button id="restart-button">
-            重新掃描
-        </button>
-    </div>
-
-    <!-- 錯誤提示 -->
-    <div id="error-message">
-        無法啟動相機，請確認瀏覽器已允許使用相機，
-        並使用 HTTPS 網址開啟。
-        <br><br>
-        <button onclick="location.reload()">重新載入</button>
+        <p id="status">請按下開始 AR</p>
     </div>
 
     <!-- AR 場景 -->
@@ -159,37 +117,35 @@
         renderer="colorManagement: true; physicallyCorrectLights: true"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
-        embedded>
+        embedded
+    >
 
         <a-assets>
-            <!-- 未來可以在這裡加入 Blender 兔子模型 -->
         </a-assets>
 
-        <!-- 相機 -->
+        <!-- AR 攝影機 -->
         <a-camera
             position="0 0 0"
             look-controls="enabled: false">
         </a-camera>
 
-        <!-- 掃描到兔子的家後顯示 -->
+        <!-- 辨識兔子的家 -->
         <a-entity
             id="target"
             mindar-image-target="targetIndex: 0">
 
-            <!-- AR 測試方塊 -->
-            <a-box
-                position="0 0 0.3"
-                width="0.8"
-                height="0.8"
-                depth="0.3"
-                material="shader: flat; color: #FF0000; side: double"
+            <!-- 綠色 3D 測試球體 -->
+            <a-sphere
+                position="0 0 0"
+                radius="0.3"
+                material="shader: flat; color: #00FF00; side: double"
                 visible="true">
-            </a-box>
+            </a-sphere>
 
-            <!-- AR 測試文字 -->
+            <!-- 測試文字 -->
             <a-text
                 value="AR 測試成功！"
-                position="0 0.5 0.1"
+                position="0 0.5 0"
                 align="center"
                 color="#FF0000"
                 width="2">
@@ -199,7 +155,29 @@
 
     </a-scene>
 
+    <!-- 下方操作區 -->
+    <div id="bottom-panel">
+
+        <p id="scan-message">
+            請先開啟相機，再掃描兔子的家圖片 🐰
+        </p>
+
+        <button id="start-button">
+            開始 AR
+        </button>
+
+        <button id="restart-button">
+            重新掃描
+        </button>
+
+        <p id="error-message">
+            相機啟動失敗，請確認瀏覽器相機權限。
+        </p>
+
+    </div>
+
     <script>
+
         const scene = document.querySelector("#ar-scene");
         const target = document.querySelector("#target");
 
@@ -222,7 +200,6 @@
 
             try {
 
-                // 確認 A-Frame 場景已經載入
                 if (!scene.hasLoaded) {
                     await new Promise(resolve => {
                         scene.addEventListener("loaded", resolve, {
@@ -231,7 +208,6 @@
                     });
                 }
 
-                // 啟動 MindAR
                 const arSystem =
                     scene.systems["mindar-image-system"];
 
@@ -262,7 +238,7 @@
             statusText.textContent = "🎉 成功找到兔子的家！";
 
             scanMessage.textContent =
-                "兔兔出現了！快來餵牠吃胡蘿蔔！";
+                "兔兔出現了！請觀察綠色測試球體！";
 
             console.log("成功辨識兔子的家！");
 
@@ -291,6 +267,7 @@
                 "將鏡頭對準兔子的家圖片";
 
         });
+
     </script>
 
 </body>
