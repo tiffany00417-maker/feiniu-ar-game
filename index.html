@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>飛牛牧場 AR 兔兔找找看</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <!-- MindAR -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: #f8f1df;
+    }
+
+    #top-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      padding: 15px;
+      text-align: center;
+      color: #60452d;
+      background: rgba(255, 248, 225, 0.92);
+    }
+
+    #top-panel h2 {
+      margin: 0 0 6px;
+      font-size: 21px;
+    }
+
+    #status {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    #bottom-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      padding: 14px;
+      text-align: center;
+      color: #60452d;
+      background: rgba(255, 248, 225, 0.92);
+    }
+
+    #scan-message {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    #restart-button,
+    #start-button {
+      border: none;
+      border-radius: 25px;
+      padding: 12px 25px;
+      color: white;
+      background: #8caa59;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #start-button {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 30px;
+      font-size: 18px;
+    }
+
+    #error-message {
+      display: none;
+      position: fixed;
+      z-index: 30;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85%;
+      padding: 20px;
+      border-radius: 15px;
+      background: white;
+      color: #60452d;
+      text-align: center;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 上方標題 -->
+  <div id="top-panel">
+    <h2>🐰 AR 兔兔找找看</h2>
+    <p id="status">準備開始掃描兔子的家！</p>
+  </div>
+
+  <!-- 開始 AR 按鈕 -->
+  <button id="start-button">開始 AR 探險</button>
+
+  <!-- 下方操作提示 -->
+  <div id="bottom-panel">
+    <p id="scan-message">
+      請將鏡頭對準兔子的家圖片
+    </p>
+
+    <button id="restart-button">
+      重新掃描
+    </button>
+  </div>
+
+  <!-- 錯誤提示 -->
+  <div id="error-message">
+    無法啟動相機，請確認瀏覽器已允許使用相機，
+    並使用 HTTPS 網址開啟。
+    <br><br>
+    <button onclick="location.reload()">重新載入</button>
+  </div>
+
+  <!-- AR 場景 -->
+  <a-scene
+    id="ar-scene"
+    mindar-image="
+      imageTargetSrc: ./rabbit-house.mind;
+      autoStart: false;
+      uiLoading: no;
+      uiScanning: no;
+      uiError: no;
+      filterMinCF: 0.0001;
+      filterBeta: 0.001;
+    "
+    color-space="sRGB"
+    renderer="colorManagement: true; physicallyCorrectLights: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    embedded
+  >
+
+    <a-assets>
+      <!-- 未來可以在這裡加入 Blender 兔子模型 -->
+      <!-- 例如：
+      <a-asset-item
+        id="rabbitModel"
+        src="./models/rabbit.glb">
+      </a-asset-item>
+      -->
+    </a-assets>
+
+    <!-- 相機 -->
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false">
+    </a-camera>
+
+    <!-- 掃描到兔子的家後顯示 -->
+    <a-entity
+      id="target"
+      mindar-image-target="targetIndex: 0">
+
+      <!-- 地面 -->
+      <a-circle
+        position="0 0 0"
+        rotation="-90 0 0"
+        radius="0.9"
+        color="#9BCB76">
+      </a-circle>
+
+      <!-- 兔子身體 -->
+      <a-sphere
+        position="0 0.25 0.1"
+        radius="0.25"
+        color="#F2E6D5">
+      </a-sphere>
+
+      <!-- 兔子頭 -->
+      <a-sphere
+        position="0 0.62 0.12"
+        radius="0.2"
+        color="#FFF5E8">
+      </a-sphere>
+
+      <!-- 左耳 -->
+      <a-cylinder
+        position="-0.1 0.95 0.12"
+        rotation="0 0 -12"
+        radius="0.045"
+        height="0.35"
+        color="#FFF5E8">
+      </a-cylinder>
+
+      <!-- 右耳 -->
+      <a-cylinder
+        position="0.1 0.95 0.12"
+        rotation="0 0 12"
+        radius="0.045"
+        height="0.35"
+        color="#FFF5E8">
+      </a-cylinder>
+
+      <!-- 左眼 -->
+      <a-sphere
+        position="-0.075 0.66 0.29"
+        radius="0.025"
+        color="#33251D">
+      </a-sphere>
+
+      <!-- 右眼 -->
+      <a-sphere
+        position="0.075 0.66 0.29"
+        radius="0.025"
+        color="#33251D">
+      </a-sphere>
+
+      <!-- 鼻子 -->
+      <a-sphere
+        position="0 0.59 0.31"
+        radius="0.025"
+        color="#E99A9A">
+      </a-sphere>
+
+      <!-- 胡蘿蔔 -->
+      <a-cone
+        position="0.45 0.2 0.1"
+        rotation="0 0 -90"
+        radius-bottom="0.1"
+        radius-top="0.02"
+        height="0.35"
+        color="#F28C28">
+      </a-cone>
+
+      <!-- 胡蘿蔔葉子 -->
+      <a-cone
+        position="0.55 0.4 0.1"
+        rotation="0 0 20"
+        radius-bottom="0.08"
+        radius-top="0.01"
+        height="0.2"
+        color="#5D9B45">
+      </a-cone>
+
+      <!-- 草叢 -->
+      <a-sphere
+        position="-0.5 0.1 0"
+        radius="0.18"
+        color="#6EAA52">
+      </a-sphere>
+
+      <a-sphere
+        position="-0.35 0.12 0"
+        radius="0.16"
+        color="#7DBB5B">
+      </a-sphere>
+
+      <!-- 文字 -->
+      <a-text
+        value="找到兔兔了！"
+        position="0 1.35 0"
+        align="center"
+        color="#7A4D2B"
+        width="3">
+      </a-text>
+
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    const scene = document.querySelector("#ar-scene");
+    const target = document.querySelector("#target");
+
+    const startButton = document.querySelector("#start-button");
+    const restartButton = document.querySelector("#restart-button");
+
+    const statusText = document.querySelector("#status");
+    const scanMessage = document.querySelector("#scan-message");
+    const errorMessage = document.querySelector("#error-message");
+
+    let arStarted = false;
+
+    // 開始 AR
+    startButton.addEventListener("click", async function () {
+
+      if (arStarted) return;
+
+      statusText.textContent = "正在開啟相機……";
+      scanMessage.textContent = "請允許瀏覽器使用相機";
+
+      try {
+        const arSystem = scene.systems["mindar-image-system"];
+
+        await arSystem.start();
+
+        arStarted = true;
+        startButton.style.display = "none";
+
+        statusText.textContent = "相機已開啟！";
+        scanMessage.textContent = "請將鏡頭對準兔子的家圖片 🐰";
+
+      } catch (error) {
+        console.error("AR 啟動失敗：", error);
+
+        errorMessage.style.display = "block";
+        statusText.textContent = "相機啟動失敗";
+      }
+    });
+
+    // 成功辨識圖片
+    target.addEventListener("targetFound", function () {
+
+      statusText.textContent = "🎉 成功找到兔子的家！";
+      scanMessage.textContent = "兔兔出現了！快來餵牠吃胡蘿蔔！";
+
+    });
+
+    // 離開辨識範圍
+    target.addEventListener("targetLost", function () {
+
+      statusText.textContent = "正在尋找兔子的家……";
+      scanMessage.textContent = "請重新將鏡頭對準圖片";
+
+    });
+
+    // 重新掃描
+    restartButton.addEventListener("click", function () {
+
+      statusText.textContent = "請重新掃描兔子的家！";
+      scanMessage.textContent = "將鏡頭對準兔子的家圖片";
+
+    });
+  </script>
+
+</body>
+</html>
